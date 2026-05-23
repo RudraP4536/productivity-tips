@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Productivity Tips</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.12);
+    --border-mid: rgba(0,0,0,0.2);
+    --text-primary: #1a1a18;
+    --text-secondary: #6b6b67;
+    --text-tertiary: #a0a09c;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --ff-display: 'DM Serif Display', serif;
+    --ff-body: 'DM Sans', sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18;
+      --surface: #242422;
+      --border: rgba(255,255,255,0.1);
+      --border-mid: rgba(255,255,255,0.2);
+      --text-primary: #f0ede6;
+      --text-secondary: #9a9994;
+      --text-tertiary: #5e5e5a;
+    }
+  }
+
+  body {
+    font-family: var(--ff-body);
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+  }
+
+  main { width: 100%; max-width: 580px; }
+
+  header { margin-bottom: 2rem; }
+  header h1 { font-family: var(--ff-display); font-size: 28px; font-weight: 400; color: var(--text-primary); }
+  header p { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .filter-chip {
+    font-size: 12px; font-family: var(--ff-body); font-weight: 500;
+    padding: 5px 14px; border-radius: 99px;
+    border: 0.5px solid var(--border); background: transparent;
+    color: var(--text-secondary); cursor: pointer; transition: all 0.15s;
+  }
+  .filter-chip:hover { border-color: var(--border-mid); color: var(--text-primary); }
+  .filter-chip.active { background: var(--text-primary); color: var(--bg); border-color: var(--text-primary); }
+
+  .tip-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem 2rem 1.75rem;
+    position: relative; overflow: hidden;
+    min-height: 200px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  .tip-number {
+    font-family: var(--ff-display); font-size: 80px; line-height: 1;
+    font-style: italic; color: var(--border);
+    position: absolute; top: 1rem; right: 1.5rem; user-select: none;
+  }
+
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 99px; margin-bottom: 1.25rem;
+    width: fit-content;
+  }
+
+  .tip-text {
+    font-family: var(--ff-display); font-size: 22px;
+    line-height: 1.45; color: var(--text-primary); max-width: 82%;
+  }
+
+  .tip-meta { font-size: 13px; color: var(--text-secondary); margin-top: 1.5rem; }
+
+  .controls { display: flex; align-items: center; gap: 10px; margin-bottom: 2rem; flex-wrap: wrap; }
+
+  button { font-family: var(--ff-body); cursor: pointer; }
+
+  #next-btn {
+    background: var(--text-primary); color: var(--bg);
+    border: none; padding: 10px 22px;
+    border-radius: var(--radius-md); font-size: 14px; font-weight: 500;
+    display: flex; align-items: center; gap: 6px; transition: opacity 0.15s;
+  }
+  #next-btn:hover { opacity: 0.8; }
+
+  #save-btn {
+    background: transparent; border: 0.5px solid var(--border-mid);
+    color: var(--text-primary); padding: 10px 18px;
+    border-radius: var(--radius-md); font-size: 14px; font-weight: 400;
+    display: flex; align-items: center; gap: 6px; transition: background 0.15s;
+  }
+  #save-btn:hover { background: var(--border); }
+  #save-btn.saved { color: #0F6E56; border-color: #5DCAA5; }
+
+  .saved-section { border-top: 0.5px solid var(--border); padding-top: 1.5rem; }
+  .saved-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 0.75rem; }
+  #no-saved { font-size: 13px; color: var(--text-tertiary); }
+  .saved-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .saved-list li { font-size: 13px; color: var(--text-secondary); display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+  .saved-list li i { color: var(--text-tertiary); margin-top: 2px; flex-shrink: 0; }
+
+  .fade-in { animation: fadeSlide 0.28s ease; }
+  @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Productivity Tips</h1>
+    <p>One idea at a time.</p>
+  </header>
+
+  <div class="filter-bar" id="filter-bar"></div>
+
+  <div class="tip-card" id="tip-card">
+    <span class="tip-number" id="tip-num"></span>
+    <span class="tag" id="tip-tag"></span>
+    <p class="tip-text" id="tip-text"></p>
+    <p class="tip-meta" id="tip-meta"></p>
+  </div>
+
+  <div class="controls">
+    <button id="next-btn"><i class="ti ti-refresh"></i> New tip</button>
+    <button id="save-btn"><i class="ti ti-bookmark"></i> Save tip</button>
+  </div>
+
+  <div class="saved-section">
+    <p class="saved-label">Saved tips</p>
+    <p id="no-saved">None yet — save a tip you like.</p>
+    <ul class="saved-list" id="saved-list"></ul>
+  </div>
+</main>
+
+<script>
+const tips = [
+  { text: "Break large tasks into chunks of 25 minutes — your focus is finite, treat it like a resource.", category: "Focus", effort: "Low effort" },
+  { text: "Write tomorrow's top 3 priorities before you close your laptop today.", category: "Planning", effort: "Low effort" },
+  { text: "Turn off all non-urgent notifications during deep work. Silence is a productivity multiplier.", category: "Focus", effort: "Low effort" },
+  { text: "When stuck, explain the problem out loud to yourself — articulation often unlocks the solution.", category: "Problem-solving", effort: "Low effort" },
+  { text: "Protect the first 90 minutes of your day for your hardest work, before your inbox opens.", category: "Focus", effort: "Medium effort" },
+  { text: "Schedule meetings back-to-back so they consume a block — not your whole day.", category: "Planning", effort: "Medium effort" },
+  { text: "Do a weekly review every Friday: what shipped, what's stuck, what needs a decision.", category: "Planning", effort: "Medium effort" },
+  { text: "Use a 'capture inbox' — one place to dump every idea, task, and note, sorted later.", category: "Organisation", effort: "Medium effort" },
+  { text: "If a task takes under 2 minutes, do it now instead of adding it to a list.", category: "Focus", effort: "Low effort" },
+  { text: "Build a shutdown ritual — a small routine that signals to your brain that work is over.", category: "Wellbeing", effort: "Low effort" },
+  { text: "Eat the frog first: tackle the task you've been dreading before anything else.", category: "Focus", effort: "Medium effort" },
+  { text: "Single-task. Multitasking is a myth — it's just rapid context-switching with a hidden tax.", category: "Focus", effort: "Low effort" },
+  { text: "Replace 'I have to' with 'I choose to' — small language shifts reduce resistance.", category: "Mindset", effort: "Low effort" },
+  { text: "Add a 10-minute buffer between meetings so you can actually process what was decided.", category: "Planning", effort: "Low effort" },
+  { text: "Done is better than perfect. Ship, then iterate.", category: "Mindset", effort: "Low effort" },
+  { text: "Use templates for tasks you repeat — emails, reviews, briefs. Stop rewriting from scratch.", category: "Organisation", effort: "Medium effort" },
+  { text: "Take a proper lunch break away from screens. Your afternoon self will thank you.", category: "Wellbeing", effort: "Low effort" },
+  { text: "Say no to things that don't serve your top priorities — it protects time for what matters.", category: "Mindset", effort: "Medium effort" },
+  { text: "Energy management matters more than time management. Track when you feel sharpest.", category: "Wellbeing", effort: "Medium effort" },
+  { text: "Batch similar tasks together — emails in one block, calls in another, creative work in another.", category: "Organisation", effort: "Medium effort" },
+];
+
+const tagStyles = {
+  "Focus":           { bg: "#E6F1FB", color: "#0C447C" },
+  "Planning":        { bg: "#EAF3DE", color: "#27500A" },
+  "Problem-solving": { bg: "#FAEEDA", color: "#633806" },
+  "Organisation":    { bg: "#EEEDFE", color: "#3C3489" },
+  "Wellbeing":       { bg: "#E1F5EE", color: "#085041" },
+  "Mindset":         { bg: "#FAECE7", color: "#712B13" },
+};
+
+const categories = ["All", ...Object.keys(tagStyles)];
+let activeCategory = "All";
+let seen = [];
+let savedTips = [];
+let currentTip = null;
+
+function getPool() {
+  return tips.filter(t => activeCategory === "All" || t.category === activeCategory);
+}
+
+function nextTip() {
+  let pool = getPool();
+  if (!pool.length) return;
+  let unseen = pool.filter(t => !seen.includes(t));
+  if (!unseen.length) { seen = []; unseen = pool; }
+  const tip = unseen[Math.floor(Math.random() * unseen.length)];
+  seen.push(tip);
+  currentTip = tip;
+
+  const card = document.getElementById("tip-card");
+  card.classList.remove("fade-in");
+  void card.offsetWidth;
+  card.classList.add("fade-in");
+
+  document.getElementById("tip-num").textContent = String(tips.indexOf(tip) + 1).padStart(2, "0");
+
+  const tagEl = document.getElementById("tip-tag");
+  tagEl.textContent = tip.category;
+  const s = tagStyles[tip.category] || {};
+  tagEl.style.background = s.bg || "#F1EFE8";
+  tagEl.style.color = s.color || "#444441";
+
+  document.getElementById("tip-text").textContent = tip.text;
+  document.getElementById("tip-meta").textContent = tip.effort;
+  updateSaveBtn();
+}
+
+function updateSaveBtn() {
+  const saved = savedTips.some(s => s.text === currentTip?.text);
+  const btn = document.getElementById("save-btn");
+  btn.classList.toggle("saved", saved);
+  btn.innerHTML = saved
+    ? '<i class="ti ti-bookmark-filled"></i> Saved'
+    : '<i class="ti ti-bookmark"></i> Save tip';
+}
+
+function buildFilters() {
+  const bar = document.getElementById("filter-bar");
+  bar.innerHTML = "";
+  categories.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.className = "filter-chip" + (cat === activeCategory ? " active" : "");
+    btn.textContent = cat;
+    btn.addEventListener("click", () => {
+      activeCategory = cat;
+      seen = [];
+      buildFilters();
+      nextTip();
+    });
+    bar.appendChild(btn);
+  });
+}
+
+function renderSaved() {
+  const list = document.getElementById("saved-list");
+  const none = document.getElementById("no-saved");
+  list.innerHTML = "";
+  none.style.display = savedTips.length ? "none" : "block";
+  savedTips.forEach(t => {
+    const li = document.createElement("li");
+    li.innerHTML = `<i class="ti ti-circle-dot"></i><span>${t.text}</span>`;
+    list.appendChild(li);
+  });
+}
+
+document.getElementById("next-btn").addEventListener("click", nextTip);
+document.getElementById("save-btn").addEventListener("click", () => {
+  if (!currentTip) return;
+  const idx = savedTips.findIndex(s => s.text === currentTip.text);
+  if (idx === -1) savedTips.push(currentTip);
+  else savedTips.splice(idx, 1);
+  renderSaved();
+  updateSaveBtn();
+});
+
+buildFilters();
+nextTip();
+</script>
+</body>
+</html>
